@@ -1,0 +1,7 @@
+A little program to solve a Sudoku Puzzle.
+
+
+Uses a brute force algorithm to solve it.
+Perhaps a more elegant solution can be found.
+
+Would attempting to solve by expanding from 3x3 -> 6x6 -> 9x9 end up being faster?
