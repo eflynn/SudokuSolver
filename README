@@ -1,7 +1,8 @@
-A little program to solve a Sudoku Puzzle.
+# A little program to solve a Sudoku Puzzle.
+
+Sudoku is a type of Constraint Satisfaction Problem. A CSP is formulated in terms of variables, possible values of the variables (domains), and constraints. Sudoku has 27 global constraints for each row, column, and box. For more information please see the following page:
+
+[Solving Every Sudoku Puzzle](http://norvig.com/sudoku.html)
 
 
-Uses a brute force algorithm to solve it.
-Perhaps a more elegant solution can be found.
 
-Would attempting to solve by expanding from 3x3 -> 6x6 -> 9x9 end up being faster?
