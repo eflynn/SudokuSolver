@@ -2,21 +2,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-
-
 /**
  * A class to solve any Sudoku puzzle through recursion
  */
 public class SudokuSolver {
-
 	private static final int INPUT_DATA_LIST = 27;
 	private static final int BOX_SIZE = 3;
 	private static final int ROWS = 9;
 	private static final int COLS = 9;
 	private final String fileName;
-	private PointValue[][] grid = new PointValue[ROWS][COLS];
-	public double size;
-	
+	private int[][] grid = new int[ROWS][COLS];
+	public int size;
+
 	/**
 	 * Constructor receives name of the file from command line and passes to
 	 * readIn()
@@ -27,7 +24,6 @@ public class SudokuSolver {
 	public SudokuSolver(String fileName) throws FileNotFoundException {
 		this.fileName = fileName;
 		readIn(fileName);
-
 	}
 
 	/**
@@ -38,16 +34,13 @@ public class SudokuSolver {
 	 */
 	private void readIn(String sudokuFile) throws FileNotFoundException {
 		Scanner file = new Scanner(new File(sudokuFile));
-		String input;
 		int xCoord = 0;
 		int yCoord = 0;
 
 		for (int i = 0; i < INPUT_DATA_LIST; i++) {
-			input = file.next();
+			String input = file.next();
 			for (int n = 0; n < BOX_SIZE; n++) {
-				String character = input.substring(n, n + 1);
-				int number = Integer.parseInt(character);
-				grid[xCoord][yCoord] = new PointValue(xCoord, yCoord, number);
+				grid[xCoord][yCoord] = Character.digit(input.charAt(n), 10);
 				yCoord++;
 
 				if (yCoord == ROWS) {
@@ -56,6 +49,8 @@ public class SudokuSolver {
 				}
 			}
 		}
+
+		file.close();
 	}
 
 	/**
@@ -65,9 +60,9 @@ public class SudokuSolver {
 	 */
 	public String toString() {
 		StringBuilder builder = new StringBuilder(fileName);
-		
+
 		builder.append("\n+--------------------+\n|");
-		
+
 		for (int xCoord = 0; xCoord < COLS; xCoord++) {
 			for (int yCoord = 0; yCoord < ROWS; yCoord++) {
 				if (xCoord == BOX_SIZE && yCoord == 0)
@@ -75,19 +70,19 @@ public class SudokuSolver {
 				else if (xCoord == 2 * BOX_SIZE && yCoord == 0)
 					builder.append("------+------+------|\n|");
 
-				if (grid[xCoord][yCoord].getValue() == 0)
+				if (grid[xCoord][yCoord] == 0)
 					builder.append(". ");
 				else
-					builder.append(grid[xCoord][yCoord].getValue() + " ");
+					builder.append(grid[xCoord][yCoord] + " ");
 
-				if ((grid[xCoord][yCoord].y + 1) % BOX_SIZE == 0)
+				if ((yCoord + 1) % BOX_SIZE == 0)
 					builder.append("|");
 				if (yCoord == ROWS - 1 && xCoord != COLS - 1)
 					builder.append("\n|");
 			}
 		}
 		builder.append("\n+--------------------+\n|");
-		
+
 		return builder.toString();
 	}
 
@@ -101,7 +96,6 @@ public class SudokuSolver {
 	 *            the starting y value of the grid
 	 * @return true when board is complete
 	 */
-	
 
 	private boolean puzzleSolver(int xCoord, int yCoord) {
 		size++;
@@ -113,17 +107,19 @@ public class SudokuSolver {
 				return true;
 			}
 		}
-		if (grid[xCoord][yCoord].getValue() != 0) {
+		if (grid[xCoord][yCoord] != 0) {
 			return puzzleSolver(xCoord + 1, yCoord);
 		}
 		for (int solution = 1; solution <= ROWS; solution++) {
 			if (cellIsValid(xCoord, yCoord, solution)) {
-				grid[xCoord][yCoord].setValue(solution);
+				grid[xCoord][yCoord] = solution;
 				if (puzzleSolver(xCoord + 1, yCoord))
 					return true;
 			}
 		}
-		grid[xCoord][yCoord].setValue(0);
+
+		grid[xCoord][yCoord] = 0;
+
 		return false;
 	}
 
@@ -143,11 +139,11 @@ public class SudokuSolver {
 	private boolean cellIsValid(int xCoord, int yCoord, int candidate) {
 
 		for (int testPosition = 0; testPosition < ROWS; testPosition++) {
-			if (grid[xCoord][testPosition].getValue() == candidate)
+			if (grid[xCoord][testPosition] == candidate)
 				return false;
 		}
 		for (int testPosition = 0; testPosition < COLS; testPosition++) {
-			if (grid[testPosition][yCoord].getValue() == candidate)
+			if (grid[testPosition][yCoord] == candidate)
 				return false;
 		}
 		return boxIsValid(xCoord, yCoord, candidate);
@@ -168,7 +164,7 @@ public class SudokuSolver {
 		int startingColumn = yCoord / 3 * 3;
 		for (int j = startingRow; j < startingRow + 3; j++) {
 			for (int k = startingColumn; k < startingColumn + 3; k++) {
-				if (grid[j][k].getValue() == candidate)
+				if (grid[j][k] == candidate)
 					return false;
 			}
 		}
@@ -183,18 +179,19 @@ public class SudokuSolver {
 	 */
 	public static void main(String[] args) throws FileNotFoundException {
 		Scanner kbd = new Scanner(System.in);
-		System.out.print("Enter the filename of the puzzle you would like to solve: ");
+		System.out
+				.print("Enter the filename of the puzzle you would like to solve: ");
 		String line = kbd.nextLine();
 		while (line.length() == 0) {
 			System.out.println("Please enter a valid puzzle filename");
 			line = kbd.nextLine();
 		}
 		kbd.close();
-		
+
 		SudokuSolver newGame = new SudokuSolver(line);
 		System.out.println(newGame);
 		newGame.puzzleSolver(0, 0);
 		System.out.println(newGame);
-		
+
 	}
 }
