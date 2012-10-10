@@ -64,27 +64,31 @@ public class SudokuSolver {
 	 * @return the grid as a String
 	 */
 	public String toString() {
-		String test = fileName;
-		test += ("\n----------------------\n|");
+		StringBuilder builder = new StringBuilder(fileName);
+		
+		builder.append("\n+--------------------+\n|");
+		
 		for (int xCoord = 0; xCoord < COLS; xCoord++) {
 			for (int yCoord = 0; yCoord < ROWS; yCoord++) {
 				if (xCoord == BOX_SIZE && yCoord == 0)
-					test += ("------+------+------|\n|");
-				if (xCoord == 2 * BOX_SIZE && yCoord == 0)
-					test += ("------+------+------|\n|");
+					builder.append("------+------+------|\n|");
+				else if (xCoord == 2 * BOX_SIZE && yCoord == 0)
+					builder.append("------+------+------|\n|");
+
 				if (grid[xCoord][yCoord].getValue() == 0)
-					test += ". ";
+					builder.append(". ");
 				else
-					test += grid[xCoord][yCoord].getValue() + " ";
+					builder.append(grid[xCoord][yCoord].getValue() + " ");
 
 				if ((grid[xCoord][yCoord].y + 1) % BOX_SIZE == 0)
-					test += "|";
+					builder.append("|");
 				if (yCoord == ROWS - 1 && xCoord != COLS - 1)
-					test += "\n|";
+					builder.append("\n|");
 			}
 		}
-		test += ("\n----------------------\n");
-		return test;
+		builder.append("\n+--------------------+\n|");
+		
+		return builder.toString();
 	}
 
 	/**
@@ -179,17 +183,18 @@ public class SudokuSolver {
 	 */
 	public static void main(String[] args) throws FileNotFoundException {
 		Scanner kbd = new Scanner(System.in);
-		System.out
-				.print("Enter the filename of the puzzle you would like to solve: ");
+		System.out.print("Enter the filename of the puzzle you would like to solve: ");
 		String line = kbd.nextLine();
 		while (line.length() == 0) {
 			System.out.println("Please enter a valid puzzle filename");
 			line = kbd.nextLine();
 		}
+		kbd.close();
+		
 		SudokuSolver newGame = new SudokuSolver(line);
 		System.out.println(newGame);
 		newGame.puzzleSolver(0, 0);
 		System.out.println(newGame);
-
+		
 	}
 }
